@@ -156,4 +156,6 @@ int main() {
     for (Polynomial i : problems) {
         std::cout << std::to_string(i.problem_number) << ". " << i.displayFactors() << "\n";
     }
+
+    pause();
 };
