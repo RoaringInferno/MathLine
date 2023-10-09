@@ -30,13 +30,13 @@ class Factor {
 
         Factor() {}
 
-        void initialize(int front_limit, int back_limit) {
+        void init(int front_limit, int back_limit) {
             front = generate(front_limit);
             back = generate(back_limit);
         }
 
-        void display() {
-            std::cout << "(" << std::to_string(front)<< "x" << displayNum(back)<< ")";
+        std::string display() {
+            return "(" + std::to_string(front)+ "x" + displayNum(back)+ ")";
         }
 };
 
@@ -61,26 +61,73 @@ void generateCoefficients(Factor factor[], int factor_count, int current_number,
     };
 };
 
-void displayProblem (Factor factor[], int factor_count) {
-    // Generate a full list of all combinations, including order
-    // Assign numbers to exponent based on order
 
-    int coefficients[factor_count + 1];
-    for (int i = 0; i <= factor_count; ++i) {
-        coefficients[i] = 0;
-    }
 
-    generateCoefficients(factor, factor_count, 1, 0, 0, coefficients);
-    /*
-    for (int i : coefficients) {
-        std::cout <<", "<<std::to_string(i);
-    }
-    std::cout<<"\n";
-    */
-    for (int i = factor_count; i > 0; --i) {
-        std::cout << displayNum(coefficients[i]) << "x^" << std::to_string(i);
-    }
-    std::cout << displayNum(coefficients[0]) << "\n";
+class Polynomial {
+    private:
+        int factor_count, front_limit, back_limit;
+    public:
+        int problem_number;
+        Factor* factor;
+        
+        Polynomial(){};
+
+        void init(int front_limit, int back_limit, int factor_count, int pn) {
+            this->problem_number=pn;
+            this->factor_count=factor_count;
+            this->front_limit=front_limit;
+            this->back_limit=back_limit;
+
+            factor = new Factor[factor_count];
+            for (int i = 0; i < factor_count; ++i) {
+                factor[i].init(front_limit, back_limit);
+            }
+            /*
+            for (Factor i : factor) {
+                i.display();
+            }
+            std::cout<<"\n";
+            */
+        }
+
+        /*
+        ~Polynomial() {
+        // Deallocate the memory for the factor array
+        delete[] factor;
+        }
+        */
+
+        std::string display () {
+            // Generate a full list of all combinations, including order
+            // Assign numbers to exponent based on order
+
+            int coefficients[factor_count + 1];
+            for (int i = 0; i <= factor_count; ++i) {
+                coefficients[i] = 0;
+            }
+
+            generateCoefficients(factor, factor_count, 1, 0, 0, coefficients);
+            /*
+            for (int i : coefficients) {
+                std::cout <<", "<<std::to_string(i);
+            }
+            std::cout<<"\n";
+            */
+           std::string returnval = "";
+            for (int i = factor_count; i > 0; --i) {
+                returnval += displayNum(coefficients[i]) + "x^" + std::to_string(i);
+            }
+            returnval += displayNum(coefficients[0]);
+            return returnval;
+        };
+
+        std::string displayFactors() {
+            std::string returnval = "";
+            for (int i  = 0; i < factor_count; ++i) {
+                returnval += factor[i].display();
+            }
+            return returnval;
+        }
 };
 
 int main() {
@@ -94,26 +141,19 @@ int main() {
     std::cin >> factor_count;
     std::cout << "Number of problems. ";
     std::cin >> problem_count;
-    for(int i = 0; i < problem_count; ++i) {
-        Factor factor[factor_count];
-        for (int i = 0; i < factor_count; ++i) {
-            factor[i].initialize(front_limit, back_limit);
-        }
-        /*
-        for (Factor i : factor) {
-            i.display();
-        }
-        std::cout<<"\n";
-        */
-        displayProblem(factor, factor_count);
-        pause();
-        for (Factor i : factor) {
-            i.display();
-        }
-        std::cout<<"\n";
 
-        pause();
+    Polynomial problems[problem_count];
+    for (int i = 0; i < problem_count; ++i) {
+        problems[i].init(front_limit, back_limit, factor_count, i+1);
+    }
+
+    for (Polynomial i : problems) {
+        std::cout << std::to_string(i.problem_number) << ". " << i.display() << "\n";
     }
 
     pause();
+
+    for (Polynomial i : problems) {
+        std::cout << std::to_string(i.problem_number) << ". " << i.displayFactors() << "\n";
+    }
 };
