@@ -12,7 +12,7 @@ namespace meta
     /*
      * Version Number
      * Semantic Versioning
-     * Major Feature.Feature.Patch
+     * Major Feature.Feature.grPatch
      */
     const std::string version = "a0.0.0";
 
